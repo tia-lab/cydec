@@ -1,1 +1,1 @@
-# covec
+# cydec
