@@ -1,0 +1,9 @@
+[tasks.r-full]
+description = "Complete manual workflow: update, commit, push, and release"
+dependencies = ["r-update"]
+script = [
+  "git add .",
+  "git commit -m 'chore: release'",
+  "git push",
+  "release-plz release --git-token $(gh auth token)",
+]
