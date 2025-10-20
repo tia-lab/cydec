@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2](https://github.com/tia-lab/cydec/compare/v0.0.1...v0.0.2) - 2025-10-20
+
+### Fixed
+
+- update token retrieval method in release PR workflow for consistency
+
+### Other
+
+- update script formatting in Makefile.toml for better readability
+- add complete PR workflow for creating and merging release pull requests
+- enhance documentation for compression library with detailed examples and supported types
+
 ## [0.0.1](https://github.com/tia-lab/cydec/releases/tag/v0.0.1) - 2025-10-20
 
 ### Added
