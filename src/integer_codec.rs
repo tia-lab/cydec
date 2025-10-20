@@ -49,7 +49,7 @@ impl IntegerCodec {
         // Simple LZ4 compression with header
         let mut buf = Vec::with_capacity(data.len() / 2);
         // header: magic + version + codec + data length
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(4); // 6: type (4 = raw bytes)
@@ -69,7 +69,7 @@ impl IntegerCodec {
         if blob.len() < 15 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
         if blob[4] != 1 {
@@ -101,7 +101,7 @@ impl IntegerCodec {
         // delta + zigzag → varint
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(0); // 6: type (0 = i64)
@@ -129,7 +129,7 @@ impl IntegerCodec {
         if blob.len() < 15 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
         if blob[4] != 1 {
@@ -168,7 +168,7 @@ impl IntegerCodec {
         // delta + varint (no zigzag needed for unsigned)
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(1); // 6: type (1 = u64)
@@ -196,7 +196,7 @@ impl IntegerCodec {
         if blob.len() < 15 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
         if blob[4] != 1 {
@@ -234,7 +234,7 @@ impl IntegerCodec {
         // delta + zigzag → varint (similar to i64 but with i32)
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(2); // 6: type (2 = i32)
@@ -262,7 +262,7 @@ impl IntegerCodec {
         if blob.len() < 15 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
         if blob[4] != 1 {
@@ -301,7 +301,7 @@ impl IntegerCodec {
         // delta + varint (no zigzag needed for unsigned)
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(3); // 6: type (3 = u32)
@@ -329,7 +329,7 @@ impl IntegerCodec {
         if blob.len() < 15 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
         if blob[4] != 1 {

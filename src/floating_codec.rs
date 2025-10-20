@@ -59,7 +59,7 @@ impl FloatingCodec {
         // Compress as i64 but with f64 type identifier
         let mut buf = Vec::with_capacity(scaled_data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(4); // 6: type (4 = f64)
@@ -94,7 +94,7 @@ impl FloatingCodec {
             bail!("blob too small");
         }
 
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
 
@@ -155,7 +155,7 @@ impl FloatingCodec {
         // Compress as i32 but with f32 type identifier
         let mut buf = Vec::with_capacity(scaled_data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"ORSO"); // 0..4
+        buf.extend_from_slice(b"CYDEC"); // 0..4
         buf.push(1); // 4: version
         buf.push(1); // 5: codec LZ4
         buf.push(5); // 6: type (5 = f32)
@@ -190,7 +190,7 @@ impl FloatingCodec {
             bail!("blob too small");
         }
 
-        if &blob[0..4] != b"ORSO" {
+        if &blob[0..4] != b"CYDEC" {
             bail!("bad magic");
         }
 

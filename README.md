@@ -16,6 +16,7 @@ The result is typically 2-10x compression ratios for sorted or time-series numer
 ## When to use it
 
 This library works best for:
+
 - Time-series data where values change gradually
 - Sorted or semi-sorted numeric arrays
 - Database column storage
@@ -23,6 +24,7 @@ This library works best for:
 - Any application where you need to compress large arrays of numbers
 
 It may not be the best choice for:
+
 - Random, unsorted data with no patterns
 - Very small datasets (the header overhead isn't worth it)
 - Applications requiring extreme compression ratios (consider zstd instead)
@@ -54,6 +56,7 @@ fn main() -> Result<()> {
 ## Supported types
 
 ### Integer types
+
 - `i64` / `u64` - 64-bit integers
 - `i32` / `u32` - 32-bit integers
 - `i16` / `u16` - 16-bit integers
@@ -61,6 +64,7 @@ fn main() -> Result<()> {
 - Raw bytes - Generic byte arrays
 
 ### Floating-point types
+
 - `f64` - 64-bit floats (9 decimal places precision by default)
 - `f32` - 32-bit floats (6 decimal places precision by default)
 
@@ -87,7 +91,8 @@ let decompressed = codec.par_decompress_i64(&compressed)?;
 4. **LZ4 compression**: The final encoded bytes are compressed with LZ4 for additional space savings
 
 The compressed format includes a small header (15-23 bytes) containing:
-- Magic bytes ("ORSO")
+
+- Magic bytes ("CYDEC")
 - Version number
 - Codec type
 - Data type identifier
@@ -106,6 +111,7 @@ The library prioritizes speed over maximum compression. If you need better compr
 ## Development status
 
 This library is functional but still evolving. The API may change in future versions. Currently tested on:
+
 - Linux x86_64
 - macOS ARM64 and x86_64
 
@@ -118,6 +124,7 @@ Dual licensed under MIT OR Apache-2.0. Choose whichever license works best for y
 ## Acknowledgments
 
 Built on top of excellent Rust crates:
+
 - `integer-encoding` for variable-length integers
 - `lz4_flex` for LZ4 compression
 - `rayon` for parallel processing
