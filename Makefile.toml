@@ -1,3 +1,9 @@
+[tasks.r-update]
+description = "Update versions and changelog locally (manual workflow)"
+command = "release-plz"
+args = ["update"]
+
+
 [tasks.r-full]
 description = "Complete manual workflow: update, commit, push, and release"
 dependencies = ["r-update"]
