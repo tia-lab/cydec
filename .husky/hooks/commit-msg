@@ -1,0 +1,52 @@
+#!/bin/sh
+# Commit message hook for conventional commits validation
+# Validates commit message format without requiring external tools
+
+set -e
+
+commit_msg_file="$1"
+commit_msg=$(cat "$commit_msg_file")
+
+# Skip validation for merge commits
+if echo "$commit_msg" | grep -q "^Merge "; then
+    exit 0
+fi
+
+# Conventional commit pattern
+# Matches: type(optional-scope): message
+# Or: type: message
+conventional_pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_\-]+\))?: .+'
+
+if ! echo "$commit_msg" | grep -qE "$conventional_pattern"; then
+    echo "ERROR: Commit message does not follow conventional commit format"
+    echo ""
+    echo "Your commit message:"
+    echo "  $commit_msg"
+    echo ""
+    echo "Required format:"
+    echo "  <type>(<optional-scope>): <description>"
+    echo ""
+    echo "Valid types:"
+    echo "  feat:     A new feature"
+    echo "  fix:      A bug fix"
+    echo "  docs:     Documentation only changes"
+    echo "  style:    Code style changes (formatting, etc)"
+    echo "  refactor: Code refactoring"
+    echo "  perf:     Performance improvements"
+    echo "  test:     Adding or updating tests"
+    echo "  build:    Build system or dependency changes"
+    echo "  ci:       CI/CD changes"
+    echo "  chore:    Other changes (maintenance, etc)"
+    echo "  revert:   Revert a previous commit"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add new compression algorithm"
+    echo "  fix: handle edge case in delta encoding"
+    echo "  docs(readme): update usage examples"
+    echo "  refactor(codec): simplify integer compression"
+    echo ""
+    exit 1
+fi
+
+echo "Commit message follows conventional commit format"
+exit 0

@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use integer_encoding::{VarIntReader, VarIntWriter};
 use rayon::prelude::*;
 use std::io::Cursor;
@@ -379,7 +379,7 @@ impl IntegerCodec {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::{rngs::StdRng, Rng, SeedableRng};
+    use rand::{Rng, SeedableRng, rngs::StdRng};
 
     #[test]
     fn roundtrip_bytes() -> Result<()> {
@@ -414,7 +414,7 @@ mod tests {
     #[test]
     fn roundtrip_i32() -> Result<()> {
         let c = IntegerCodec::default();
-        let v: Vec<i32> = (0..10_000).map(|i| i as i32).collect();
+        let v: Vec<i32> = (0..10_000).collect();
         let blob = c.compress_i32(&v)?;
         let back = c.decompress_i32(&blob)?;
         assert_eq!(v, back);
@@ -490,7 +490,7 @@ mod tests {
             // start around 117_000.xxx (scaled by 1e6)
             let mut ema: f64 = 117_100.0;
             let alpha = 2.0 / (9.0 + 1.0); // like EMA(9)
-                                           // deterministic "price" signal: slow trend + small oscillations
+            // deterministic "price" signal: slow trend + small oscillations
             for i in 0..len {
                 let t = i as f64;
                 let price = 117_000.0
@@ -544,7 +544,7 @@ mod tests {
             // start around 117_000
             let mut ema: f64 = 117_100.0;
             let alpha = 2.0 / (9.0 + 1.0); // like EMA(9)
-                                           // deterministic "price" signal: slow trend + small oscillations
+            // deterministic "price" signal: slow trend + small oscillations
             for i in 0..len {
                 let t = i as f64;
                 let price = 117_000.0
@@ -598,7 +598,7 @@ mod tests {
             // start around 117_000
             let mut ema: f64 = 117_100.0;
             let alpha = 2.0 / (9.0 + 1.0); // like EMA(9)
-                                           // deterministic "price" signal: slow trend + small oscillations
+            // deterministic "price" signal: slow trend + small oscillations
             for i in 0..len {
                 let t = i as f64;
                 let price = 117_000.0
@@ -652,7 +652,7 @@ mod tests {
             // start around 117_000
             let mut ema: f64 = 117_100.0;
             let alpha = 2.0 / (9.0 + 1.0); // like EMA(9)
-                                           // deterministic "price" signal: slow trend + small oscillations
+            // deterministic "price" signal: slow trend + small oscillations
             for i in 0..len {
                 let t = i as f64;
                 let price = 117_000.0

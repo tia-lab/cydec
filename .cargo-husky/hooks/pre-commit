@@ -1,0 +1,25 @@
+#!/bin/sh
+# Pre-commit hook for cydec
+# Auto-fixes formatting and runs clippy checks
+
+set -e
+
+echo "Running pre-commit checks..."
+
+# Auto-fix formatting first
+echo "1. Auto-formatting code with cargo fmt..."
+cargo fmt --all
+
+# Check if formatting is clean after auto-fix
+echo "2. Verifying formatting is clean..."
+if ! cargo fmt --all -- --check; then
+    echo "Warning: Code still has formatting issues after auto-fix"
+    echo "This might indicate a formatting configuration problem"
+    # Don't block - user requested auto-fix without blocking
+fi
+
+# Run clippy
+echo "3. Running clippy checks..."
+cargo clippy --all-targets -- -D warnings
+
+echo "Pre-commit checks passed!"

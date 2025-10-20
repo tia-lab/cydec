@@ -11,3 +11,6 @@ rayon = "1.7"
 rand = "0.8"
 anyhow = "1.0"
 lz4_flex = { version = "0.11", features = ["std"] }
+
+[dev-dependencies]
+cargo-husky = { version = "1", features = ["user-hooks"] }

@@ -45,7 +45,7 @@ impl FloatingCodec {
     }
 
     /// Compress f64 vector by converting to scaled i64
-    pub fn compress_f64(&self, data: &Vec<f64>, scale: Option<f64>) -> Result<Vec<u8>> {
+    pub fn compress_f64(&self, data: &[f64], scale: Option<f64>) -> Result<Vec<u8>> {
         if data.is_empty() {
             return Ok(Vec::new());
         }
@@ -141,7 +141,7 @@ impl FloatingCodec {
     }
 
     /// Compress f32 vector by converting to scaled i32
-    pub fn compress_f32(&self, data: &Vec<f32>, scale: Option<f32>) -> Result<Vec<u8>> {
+    pub fn compress_f32(&self, data: &[f32], scale: Option<f32>) -> Result<Vec<u8>> {
         if data.is_empty() {
             return Ok(Vec::new());
         }
