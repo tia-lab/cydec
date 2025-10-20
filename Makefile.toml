@@ -26,3 +26,13 @@ git push
 TOKEN=$(cat ~/.config/gh/hosts.yml | grep oauth_token | awk '{print $2}')
 release-plz release --git-token "$TOKEN"
 '''
+
+[tasks.r-release-auto]
+description = "Auto-release after PR merge (use with caution)"
+script = [
+  "echo 'Pulling latest changes...'",
+  "git pull",
+  "echo 'Publishing release...'",
+  "release-plz release",
+  "echo 'Release published!'"
+]
