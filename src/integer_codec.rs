@@ -49,11 +49,11 @@ impl IntegerCodec {
         // Simple LZ4 compression with header
         let mut buf = Vec::with_capacity(data.len() / 2);
         // header: magic + version + codec + data length
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(4); // 6: type (4 = raw bytes)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(4); // 7: type (4 = raw bytes)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // compress the data
         let comp = lz4_flex::block::compress_prepend_size(data);
@@ -66,24 +66,24 @@ impl IntegerCodec {
         if blob.is_empty() {
             return Ok(Vec::new());
         }
-        if blob.len() < 15 {
+        if blob.len() < 16 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
-        if blob[6] != 4 {
+        if blob[7] != 4 {
             bail!("unsupported type, expected raw bytes");
         }
-        let original_len = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let original_len = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
-        let decompressed = lz4_flex::block::decompress_size_prepended(&blob[15..])
+        let decompressed = lz4_flex::block::decompress_size_prepended(&blob[16..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         if decompressed.len() != original_len {
@@ -101,11 +101,11 @@ impl IntegerCodec {
         // delta + zigzag → varint
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(0); // 6: type (0 = i64)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(0); // 7: type (0 = i64)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // stream varints into a temp vec
         let mut tmp = Vec::with_capacity(data.len() * 2);
@@ -126,24 +126,24 @@ impl IntegerCodec {
         if blob.is_empty() {
             return Ok(Vec::new());
         }
-        if blob.len() < 15 {
+        if blob.len() < 16 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
-        if blob[6] != 0 {
+        if blob[7] != 0 {
             bail!("unsupported type, expected i64");
         }
-        let n = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let n = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
-        let packed = lz4_flex::block::decompress_size_prepended(&blob[15..])
+        let packed = lz4_flex::block::decompress_size_prepended(&blob[16..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         let mut cur = Cursor::new(packed.as_slice());
@@ -168,11 +168,11 @@ impl IntegerCodec {
         // delta + varint (no zigzag needed for unsigned)
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(1); // 6: type (1 = u64)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(1); // 7: type (1 = u64)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // stream varints into a temp vec
         let mut tmp = Vec::with_capacity(data.len() * 2);
@@ -193,24 +193,24 @@ impl IntegerCodec {
         if blob.is_empty() {
             return Ok(Vec::new());
         }
-        if blob.len() < 15 {
+        if blob.len() < 16 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
-        if blob[6] != 1 {
+        if blob[7] != 1 {
             bail!("unsupported type, expected u64");
         }
-        let n = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let n = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
-        let packed = lz4_flex::block::decompress_size_prepended(&blob[15..])
+        let packed = lz4_flex::block::decompress_size_prepended(&blob[16..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         let mut cur = Cursor::new(packed.as_slice());
@@ -234,11 +234,11 @@ impl IntegerCodec {
         // delta + zigzag → varint (similar to i64 but with i32)
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(2); // 6: type (2 = i32)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(2); // 7: type (2 = i32)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // stream varints into a temp vec
         let mut tmp = Vec::with_capacity(data.len() * 2);
@@ -259,24 +259,24 @@ impl IntegerCodec {
         if blob.is_empty() {
             return Ok(Vec::new());
         }
-        if blob.len() < 15 {
+        if blob.len() < 16 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
-        if blob[6] != 2 {
+        if blob[7] != 2 {
             bail!("unsupported type, expected i32");
         }
-        let n = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let n = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
-        let packed = lz4_flex::block::decompress_size_prepended(&blob[15..])
+        let packed = lz4_flex::block::decompress_size_prepended(&blob[16..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         let mut cur = Cursor::new(packed.as_slice());
@@ -301,11 +301,11 @@ impl IntegerCodec {
         // delta + varint (no zigzag needed for unsigned)
         let mut buf = Vec::with_capacity(data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(3); // 6: type (3 = u32)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(3); // 7: type (3 = u32)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // stream varints into a temp vec
         let mut tmp = Vec::with_capacity(data.len() * 2);
@@ -326,24 +326,24 @@ impl IntegerCodec {
         if blob.is_empty() {
             return Ok(Vec::new());
         }
-        if blob.len() < 15 {
+        if blob.len() < 16 {
             bail!("blob too small");
         }
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
-        if blob[6] != 3 {
+        if blob[7] != 3 {
             bail!("unsupported type, expected u32");
         }
-        let n = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let n = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
-        let packed = lz4_flex::block::decompress_size_prepended(&blob[15..])
+        let packed = lz4_flex::block::decompress_size_prepended(&blob[16..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         let mut cur = Cursor::new(packed.as_slice());

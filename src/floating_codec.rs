@@ -59,14 +59,14 @@ impl FloatingCodec {
         // Compress as i64 but with f64 type identifier
         let mut buf = Vec::with_capacity(scaled_data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(4); // 6: type (4 = f64)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(4); // 7: type (4 = f64)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // Add scale factor to header (8 bytes for f64)
-        buf.extend_from_slice(&scale_factor.to_le_bytes()); // 15..23
+        buf.extend_from_slice(&scale_factor.to_le_bytes()); // 16..24
 
         // stream varints into a temp vec
         let mut tmp = Vec::with_capacity(scaled_data.len() * 2);
@@ -89,37 +89,37 @@ impl FloatingCodec {
             return Ok(Vec::new());
         }
 
-        if blob.len() < 23 {
+        if blob.len() < 24 {
             // Minimum header size: 15 (base) + 8 (scale)
             bail!("blob too small");
         }
 
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
 
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
 
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
 
-        if blob[6] != 4 {
+        if blob[7] != 4 {
             bail!("unsupported type, expected f64");
         }
 
-        let n = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let n = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
         // Extract scale factor from blob or use provided
         let scale_factor = if let Some(s) = scale {
             s
         } else {
-            f64::from_le_bytes(blob[15..23].try_into().unwrap())
+            f64::from_le_bytes(blob[16..24].try_into().unwrap())
         };
 
-        let packed = lz4_flex::block::decompress_size_prepended(&blob[23..])
+        let packed = lz4_flex::block::decompress_size_prepended(&blob[24..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         let mut cur = Cursor::new(packed.as_slice());
@@ -155,14 +155,14 @@ impl FloatingCodec {
         // Compress as i32 but with f32 type identifier
         let mut buf = Vec::with_capacity(scaled_data.len() * 2);
         // header: magic + version + len + type
-        buf.extend_from_slice(b"CYDEC"); // 0..4
-        buf.push(1); // 4: version
-        buf.push(1); // 5: codec LZ4
-        buf.push(5); // 6: type (5 = f32)
-        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 7..15
+        buf.extend_from_slice(b"CYDEC"); // 0..5
+        buf.push(1); // 5: version
+        buf.push(1); // 6: codec LZ4
+        buf.push(5); // 7: type (5 = f32)
+        buf.extend_from_slice(&(data.len() as u64).to_le_bytes()); // 8..16
 
         // Add scale factor to header (4 bytes for f32)
-        buf.extend_from_slice(&scale_factor.to_le_bytes()); // 15..19
+        buf.extend_from_slice(&scale_factor.to_le_bytes()); // 16..20
 
         // stream varints into a temp vec
         let mut tmp = Vec::with_capacity(scaled_data.len() * 2);
@@ -185,37 +185,37 @@ impl FloatingCodec {
             return Ok(Vec::new());
         }
 
-        if blob.len() < 19 {
+        if blob.len() < 20 {
             // Minimum header size: 15 (base) + 4 (scale)
             bail!("blob too small");
         }
 
-        if &blob[0..4] != b"CYDEC" {
+        if &blob[0..5] != b"CYDEC" {
             bail!("bad magic");
         }
 
-        if blob[4] != 1 {
+        if blob[5] != 1 {
             bail!("bad version");
         }
 
-        if blob[5] != 1 {
+        if blob[6] != 1 {
             bail!("unsupported codec");
         }
 
-        if blob[6] != 5 {
+        if blob[7] != 5 {
             bail!("unsupported type, expected f32");
         }
 
-        let n = u64::from_le_bytes(blob[7..15].try_into().unwrap()) as usize;
+        let n = u64::from_le_bytes(blob[8..16].try_into().unwrap()) as usize;
 
         // Extract scale factor from blob or use provided
         let scale_factor = if let Some(s) = scale {
             s
         } else {
-            f32::from_le_bytes(blob[15..19].try_into().unwrap())
+            f32::from_le_bytes(blob[16..20].try_into().unwrap())
         };
 
-        let packed = lz4_flex::block::decompress_size_prepended(&blob[19..])
+        let packed = lz4_flex::block::decompress_size_prepended(&blob[20..])
             .map_err(|e| anyhow!("lz4 decompress failed: {e}"))?;
 
         let mut cur = Cursor::new(packed.as_slice());
