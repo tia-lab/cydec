@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, Throughput};
+use criterion::{Criterion, Throughput, black_box, criterion_group, criterion_main};
 use cydec::{FloatingCodec, IntegerCodec};
 
 // Heavy load: 10M elements
@@ -12,23 +12,22 @@ fn bench_heavy_i64_10m(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("i64_compress_10M", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&data)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&data)).unwrap());
     });
 
     let compressed = codec.compress_i64(&data).unwrap();
 
     group.bench_function("i64_decompress_10M", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\n10M i64 elements:");
     println!("  Original size: {} MB", (size * 8) / 1_000_000);
     println!("  Compressed size: {} MB", compressed.len() / 1_000_000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -45,23 +44,22 @@ fn bench_heavy_i64_100m(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("i64_compress_100M", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&data)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&data)).unwrap());
     });
 
     let compressed = codec.compress_i64(&data).unwrap();
 
     group.bench_function("i64_decompress_100M", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\n100M i64 elements:");
     println!("  Original size: {} MB", (size * 8) / 1_000_000);
     println!("  Compressed size: {} MB", compressed.len() / 1_000_000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -73,7 +71,11 @@ fn bench_sustained_load(c: &mut Criterion) {
     let num_batches = 1_000;
 
     let batches: Vec<Vec<i64>> = (0..num_batches)
-        .map(|b| (0..batch_size).map(|i| (b * batch_size + i) as i64).collect())
+        .map(|b| {
+            (0..batch_size)
+                .map(|i| (b * batch_size + i) as i64)
+                .collect()
+        })
         .collect();
 
     let mut group = c.benchmark_group("sustained_load");
@@ -98,7 +100,11 @@ fn bench_parallel_heavy_load(c: &mut Criterion) {
     let array_size = 100_000;
 
     let arrays: Vec<Vec<i64>> = (0..num_arrays)
-        .map(|k| (0..array_size).map(|i| (k * array_size + i) as i64).collect())
+        .map(|k| {
+            (0..array_size)
+                .map(|i| (k * array_size + i) as i64)
+                .collect()
+        })
         .collect();
 
     let mut group = c.benchmark_group("parallel_heavy");
@@ -106,17 +112,13 @@ fn bench_parallel_heavy_load(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((num_arrays * array_size * 8) as u64));
 
     group.bench_function("parallel_compress_100x100K", |b| {
-        b.iter(|| {
-            codec.compress_many_i64(black_box(&arrays)).unwrap()
-        });
+        b.iter(|| codec.compress_many_i64(black_box(&arrays)).unwrap());
     });
 
     let compressed = codec.compress_many_i64(&arrays).unwrap();
 
     group.bench_function("parallel_decompress_100x100K", |b| {
-        b.iter(|| {
-            codec.decompress_many_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_many_i64(black_box(&compressed)).unwrap());
     });
 
     group.finish();
@@ -133,23 +135,22 @@ fn bench_heavy_f64_10m(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("f64_compress_10M", |b| {
-        b.iter(|| {
-            codec.compress_f64(black_box(&data), None).unwrap()
-        });
+        b.iter(|| codec.compress_f64(black_box(&data), None).unwrap());
     });
 
     let compressed = codec.compress_f64(&data, None).unwrap();
 
     group.bench_function("f64_decompress_10M", |b| {
-        b.iter(|| {
-            codec.decompress_f64(black_box(&compressed), None).unwrap()
-        });
+        b.iter(|| codec.decompress_f64(black_box(&compressed), None).unwrap());
     });
 
     println!("\n10M f64 elements:");
     println!("  Original size: {} MB", (size * 8) / 1_000_000);
     println!("  Compressed size: {} MB", compressed.len() / 1_000_000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -184,7 +185,7 @@ fn bench_memory_stress(c: &mut Criterion) {
 
 // Worst-case random data heavy load
 fn bench_heavy_random(c: &mut Criterion) {
-    use rand::{SeedableRng, Rng, rngs::StdRng};
+    use rand::{Rng, SeedableRng, rngs::StdRng};
     let mut rng = StdRng::seed_from_u64(12345);
     let codec = IntegerCodec::default();
     let size = 1_000_000;
@@ -196,23 +197,22 @@ fn bench_heavy_random(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("random_compress_1M", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&random_data)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&random_data)).unwrap());
     });
 
     let compressed = codec.compress_i64(&random_data).unwrap();
 
     group.bench_function("random_decompress_1M", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\n1M random i64 elements (worst case):");
     println!("  Original size: {} MB", (size * 8) / 1_000_000);
     println!("  Compressed size: {} MB", compressed.len() / 1_000_000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -224,7 +224,11 @@ fn bench_cpu_utilization(c: &mut Criterion) {
     let array_size = 10_000;
 
     let arrays: Vec<Vec<i64>> = (0..num_arrays)
-        .map(|k| (0..array_size).map(|i| (k * array_size + i) as i64).collect())
+        .map(|k| {
+            (0..array_size)
+                .map(|i| (k * array_size + i) as i64)
+                .collect()
+        })
         .collect();
 
     let mut group = c.benchmark_group("cpu_utilization");
@@ -239,9 +243,7 @@ fn bench_cpu_utilization(c: &mut Criterion) {
     });
 
     group.bench_function("parallel_1000x10K", |b| {
-        b.iter(|| {
-            codec.compress_many_i64(black_box(&arrays)).unwrap()
-        });
+        b.iter(|| codec.compress_many_i64(black_box(&arrays)).unwrap());
     });
 
     group.finish();
@@ -258,17 +260,13 @@ fn bench_throughput(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress_throughput", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&data)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&data)).unwrap());
     });
 
     let compressed = codec.compress_i64(&data).unwrap();
 
     group.bench_function("decompress_throughput", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     // Calculate MB/s

@@ -63,7 +63,12 @@ fn test_f64_roundtrip() -> Result<()> {
     let decompressed = codec.decompress_f64(&compressed, None)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-9, "f64 mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-9,
+            "f64 mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -76,7 +81,12 @@ fn test_f32_roundtrip() -> Result<()> {
     let decompressed = codec.decompress_f32(&compressed, None)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-6, "f32 mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-6,
+            "f32 mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -92,7 +102,12 @@ fn test_f64_custom_scale() -> Result<()> {
     let decompressed = codec.decompress_f64(&compressed, scale)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-6, "f64 custom scale mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-6,
+            "f64 custom scale mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -106,7 +121,12 @@ fn test_f32_custom_scale() -> Result<()> {
     let decompressed = codec.decompress_f32(&compressed, scale)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-3, "f32 custom scale mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-3,
+            "f32 custom scale mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -154,7 +174,12 @@ fn test_parallel_f64() -> Result<()> {
 
     for (original_array, decoded_array) in arrays.iter().zip(decompressed.iter()) {
         for (original, decoded) in original_array.iter().zip(decoded_array.iter()) {
-            assert!((original - decoded).abs() < 1e-9, "parallel f64 mismatch: {} vs {}", original, decoded);
+            assert!(
+                (original - decoded).abs() < 1e-9,
+                "parallel f64 mismatch: {} vs {}",
+                original,
+                decoded
+            );
         }
     }
     Ok(())
@@ -173,7 +198,12 @@ fn test_parallel_f32() -> Result<()> {
 
     for (original_array, decoded_array) in arrays.iter().zip(decompressed.iter()) {
         for (original, decoded) in original_array.iter().zip(decoded_array.iter()) {
-            assert!((original - decoded).abs() < 1e-6, "parallel f32 mismatch: {} vs {}", original, decoded);
+            assert!(
+                (original - decoded).abs() < 1e-6,
+                "parallel f32 mismatch: {} vs {}",
+                original,
+                decoded
+            );
         }
     }
     Ok(())
@@ -199,7 +229,12 @@ fn test_large_f64_array() -> Result<()> {
     let decompressed = codec.decompress_f64(&compressed, None)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-9, "large f64 mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-9,
+            "large f64 mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -234,7 +269,12 @@ fn test_negative_f64() -> Result<()> {
     let decompressed = codec.decompress_f64(&compressed, None)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-9, "negative f64 mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-9,
+            "negative f64 mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -282,7 +322,11 @@ fn test_time_series_i64() -> Result<()> {
     let original_size = data.len() * 8;
     let compressed_size = compressed.len();
     let ratio = original_size as f64 / compressed_size as f64;
-    assert!(ratio > 2.0, "Expected compression ratio > 2.0x for time-series, got {:.2}x", ratio);
+    assert!(
+        ratio > 2.0,
+        "Expected compression ratio > 2.0x for time-series, got {:.2}x",
+        ratio
+    );
     Ok(())
 }
 
@@ -301,13 +345,22 @@ fn test_time_series_f64() -> Result<()> {
     let decompressed = codec.decompress_f64(&compressed, None)?;
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
-        assert!((original - decoded).abs() < 1e-9, "time-series f64 mismatch: {} vs {}", original, decoded);
+        assert!(
+            (original - decoded).abs() < 1e-9,
+            "time-series f64 mismatch: {} vs {}",
+            original,
+            decoded
+        );
     }
 
     // Verify compression is effective
     let original_size = data.len() * 8;
     let compressed_size = compressed.len();
     let ratio = original_size as f64 / compressed_size as f64;
-    assert!(ratio > 1.8, "Expected compression ratio > 1.8x for time-series, got {:.2}x", ratio);
+    assert!(
+        ratio > 1.8,
+        "Expected compression ratio > 1.8x for time-series, got {:.2}x",
+        ratio
+    );
     Ok(())
 }

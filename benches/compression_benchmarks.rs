@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId, Throughput};
+use criterion::{BenchmarkId, Criterion, Throughput, black_box, criterion_group, criterion_main};
 use cydec::{FloatingCodec, IntegerCodec};
 
 // Benchmark i64 compression for various sizes
@@ -13,9 +13,7 @@ fn bench_i64_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes((size * 8) as u64));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_i64(black_box(data)).unwrap()
-            });
+            b.iter(|| codec.compress_i64(black_box(data)).unwrap());
         });
 
         println!("  i64_compression/{}: ratio: {:.2}x", size, ratio);
@@ -35,11 +33,13 @@ fn bench_i64_decompression(c: &mut Criterion) {
         let ratio = (size * 8) as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes((size * 8) as u64));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_i64(black_box(compressed)).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_i64(black_box(compressed)).unwrap());
+            },
+        );
 
         println!("  i64_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -59,9 +59,7 @@ fn bench_u64_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes(size * 8));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_u64(black_box(data)).unwrap()
-            });
+            b.iter(|| codec.compress_u64(black_box(data)).unwrap());
         });
 
         println!("  u64_compression/{}: ratio: {:.2}x", size, ratio);
@@ -81,11 +79,13 @@ fn bench_u64_decompression(c: &mut Criterion) {
         let ratio = (size * 8) as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes(size * 8));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_u64(black_box(compressed)).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_u64(black_box(compressed)).unwrap());
+            },
+        );
 
         println!("  u64_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -105,9 +105,7 @@ fn bench_i32_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes((size * 4) as u64));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_i32(black_box(data)).unwrap()
-            });
+            b.iter(|| codec.compress_i32(black_box(data)).unwrap());
         });
 
         println!("  i32_compression/{}: ratio: {:.2}x", size, ratio);
@@ -127,11 +125,13 @@ fn bench_i32_decompression(c: &mut Criterion) {
         let ratio = (size * 4) as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes((size * 4) as u64));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_i32(black_box(compressed)).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_i32(black_box(compressed)).unwrap());
+            },
+        );
 
         println!("  i32_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -151,9 +151,7 @@ fn bench_u32_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes((size * 4) as u64));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_u32(black_box(data)).unwrap()
-            });
+            b.iter(|| codec.compress_u32(black_box(data)).unwrap());
         });
 
         println!("  u32_compression/{}: ratio: {:.2}x", size, ratio);
@@ -173,11 +171,13 @@ fn bench_u32_decompression(c: &mut Criterion) {
         let ratio = (size * 4) as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes((size * 4) as u64));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_u32(black_box(compressed)).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_u32(black_box(compressed)).unwrap());
+            },
+        );
 
         println!("  u32_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -197,9 +197,7 @@ fn bench_f64_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes((size * 8) as u64));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_f64(black_box(data), None).unwrap()
-            });
+            b.iter(|| codec.compress_f64(black_box(data), None).unwrap());
         });
 
         println!("  f64_compression/{}: ratio: {:.2}x", size, ratio);
@@ -219,11 +217,13 @@ fn bench_f64_decompression(c: &mut Criterion) {
         let ratio = (size * 8) as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes((size * 8) as u64));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_f64(black_box(compressed), None).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_f64(black_box(compressed), None).unwrap());
+            },
+        );
 
         println!("  f64_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -243,9 +243,7 @@ fn bench_f32_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes((size * 4) as u64));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_f32(black_box(data), None).unwrap()
-            });
+            b.iter(|| codec.compress_f32(black_box(data), None).unwrap());
         });
 
         println!("  f32_compression/{}: ratio: {:.2}x", size, ratio);
@@ -265,11 +263,13 @@ fn bench_f32_decompression(c: &mut Criterion) {
         let ratio = (size * 4) as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes((size * 4) as u64));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_f32(black_box(compressed), None).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_f32(black_box(compressed), None).unwrap());
+            },
+        );
 
         println!("  f32_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -289,9 +289,7 @@ fn bench_bytes_compression(c: &mut Criterion) {
 
         group.throughput(Throughput::Bytes(size as u64));
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_bytes(black_box(data)).unwrap()
-            });
+            b.iter(|| codec.compress_bytes(black_box(data)).unwrap());
         });
 
         println!("  bytes_compression/{}: ratio: {:.2}x", size, ratio);
@@ -311,11 +309,13 @@ fn bench_bytes_decompression(c: &mut Criterion) {
         let ratio = size as f64 / compressed.len() as f64;
 
         group.throughput(Throughput::Bytes(size as u64));
-        group.bench_with_input(BenchmarkId::from_parameter(size), &compressed, |b, compressed| {
-            b.iter(|| {
-                codec.decompress_bytes(black_box(compressed)).unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::from_parameter(size),
+            &compressed,
+            |b, compressed| {
+                b.iter(|| codec.decompress_bytes(black_box(compressed)).unwrap());
+            },
+        );
 
         println!("  bytes_decompression/{}: ratio: {:.2}x", size, ratio);
     }
@@ -341,7 +341,7 @@ fn bench_compression_ratios(c: &mut Criterion) {
     let const_ratio = (size * 8) as f64 / const_compressed.len() as f64;
 
     // Random data (worst case)
-    use rand::{SeedableRng, Rng, rngs::StdRng};
+    use rand::{Rng, SeedableRng, rngs::StdRng};
     let mut rng = StdRng::seed_from_u64(12345);
     let random: Vec<i64> = (0..size).map(|_| rng.r#gen()).collect();
     let rand_compressed = codec.compress_i64(&random).unwrap();

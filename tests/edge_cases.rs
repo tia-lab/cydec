@@ -10,7 +10,11 @@ fn test_empty_i64() -> Result<()> {
     let compressed = codec.compress_i64(&data)?;
     let decompressed = codec.decompress_i64(&compressed)?;
     assert_eq!(data, decompressed);
-    assert_eq!(compressed.len(), 0, "Empty data should produce empty output");
+    assert_eq!(
+        compressed.len(),
+        0,
+        "Empty data should produce empty output"
+    );
     Ok(())
 }
 
@@ -144,7 +148,11 @@ fn test_all_zeros_i64() -> Result<()> {
 
     // Should compress extremely well
     let ratio = (data.len() * 8) as f64 / compressed.len() as f64;
-    assert!(ratio > 100.0, "All zeros should compress >100x, got {:.2}x", ratio);
+    assert!(
+        ratio > 100.0,
+        "All zeros should compress >100x, got {:.2}x",
+        ratio
+    );
     Ok(())
 }
 
@@ -158,7 +166,11 @@ fn test_all_same_i64() -> Result<()> {
 
     // Should compress extremely well
     let ratio = (data.len() * 8) as f64 / compressed.len() as f64;
-    assert!(ratio > 50.0, "Constant values should compress >50x, got {:.2}x", ratio);
+    assert!(
+        ratio > 50.0,
+        "Constant values should compress >50x, got {:.2}x",
+        ratio
+    );
     Ok(())
 }
 
@@ -175,7 +187,11 @@ fn test_all_same_f64() -> Result<()> {
 
     // Should compress extremely well
     let ratio = (data.len() * 8) as f64 / compressed.len() as f64;
-    assert!(ratio > 50.0, "Constant f64 should compress >50x, got {:.2}x", ratio);
+    assert!(
+        ratio > 50.0,
+        "Constant f64 should compress >50x, got {:.2}x",
+        ratio
+    );
     Ok(())
 }
 
@@ -255,7 +271,7 @@ fn test_very_large_f64_1m() -> Result<()> {
 
 #[test]
 fn test_random_worst_case() -> Result<()> {
-    use rand::{SeedableRng, Rng, rngs::StdRng};
+    use rand::{Rng, SeedableRng, rngs::StdRng};
     let mut rng = StdRng::seed_from_u64(12345);
     let codec = IntegerCodec::default();
 
@@ -336,7 +352,10 @@ fn test_wrong_type_decompression() -> Result<()> {
 
     // Try to decompress as u64 (wrong type)
     let result = codec.decompress_u64(&compressed);
-    assert!(result.is_err(), "Should fail when decompressing with wrong type");
+    assert!(
+        result.is_err(),
+        "Should fail when decompressing with wrong type"
+    );
     assert!(result.unwrap_err().to_string().contains("expected u64"));
     Ok(())
 }
@@ -417,7 +436,12 @@ fn test_f64_very_small_values() -> Result<()> {
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
         let error = (original - decoded).abs();
         let tolerance = original.abs() * 1e-3 + 1e-9; // More lenient for very small numbers
-        assert!(error < tolerance, "Very small f64: {} vs {}", original, decoded);
+        assert!(
+            error < tolerance,
+            "Very small f64: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -439,7 +463,12 @@ fn test_f64_very_large_values() -> Result<()> {
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
         let error = (original - decoded).abs();
         let tolerance = original.abs() * 1e-3; // More lenient for very large numbers
-        assert!(error < tolerance, "Very large f64: {} vs {}", original, decoded);
+        assert!(
+            error < tolerance,
+            "Very large f64: {} vs {}",
+            original,
+            decoded
+        );
     }
     Ok(())
 }
@@ -469,7 +498,11 @@ fn test_bytes_all_zeros() -> Result<()> {
 
     // Should compress very well
     let ratio = data.len() as f64 / compressed.len() as f64;
-    assert!(ratio > 50.0, "All-zero bytes should compress >50x, got {:.2}x", ratio);
+    assert!(
+        ratio > 50.0,
+        "All-zero bytes should compress >50x, got {:.2}x",
+        ratio
+    );
     Ok(())
 }
 
@@ -483,7 +516,11 @@ fn test_bytes_all_255() -> Result<()> {
 
     // Should compress very well
     let ratio = data.len() as f64 / compressed.len() as f64;
-    assert!(ratio > 50.0, "All-255 bytes should compress >50x, got {:.2}x", ratio);
+    assert!(
+        ratio > 50.0,
+        "All-255 bytes should compress >50x, got {:.2}x",
+        ratio
+    );
     Ok(())
 }
 
@@ -527,7 +564,13 @@ fn test_f64_scale_factor_very_large() -> Result<()> {
 
     for (original, decoded) in data.iter().zip(decompressed.iter()) {
         let error = (original - decoded).abs();
-        assert!(error < 1e-15, "High precision: {} vs {}, error: {}", original, decoded, error);
+        assert!(
+            error < 1e-15,
+            "High precision: {} vs {}, error: {}",
+            original,
+            decoded,
+            error
+        );
     }
     Ok(())
 }

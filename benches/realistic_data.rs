@@ -1,4 +1,4 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId, Throughput};
+use criterion::{BenchmarkId, Criterion, Throughput, black_box, criterion_group, criterion_main};
 use cydec::{FloatingCodec, IntegerCodec};
 
 // Time-series data: stock prices
@@ -23,23 +23,22 @@ fn bench_stock_prices(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_f64(black_box(&prices), None).unwrap()
-        });
+        b.iter(|| codec.compress_f64(black_box(&prices), None).unwrap());
     });
 
     let compressed = codec.compress_f64(&prices, None).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_f64(black_box(&compressed), None).unwrap()
-        });
+        b.iter(|| codec.decompress_f64(black_box(&compressed), None).unwrap());
     });
 
     println!("\nStock prices (100K points):");
     println!("  Original size: {} KB", (size * 8) / 1000);
     println!("  Compressed size: {} KB", compressed.len() / 1000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -65,23 +64,22 @@ fn bench_sensor_readings(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_f64(black_box(&readings), None).unwrap()
-        });
+        b.iter(|| codec.compress_f64(black_box(&readings), None).unwrap());
     });
 
     let compressed = codec.compress_f64(&readings, None).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_f64(black_box(&compressed), None).unwrap()
-        });
+        b.iter(|| codec.decompress_f64(black_box(&compressed), None).unwrap());
     });
 
     println!("\nSensor readings (1M points):");
     println!("  Original size: {} MB", (size * 8) / 1_000_000);
     println!("  Compressed size: {} MB", compressed.len() / 1_000_000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -99,23 +97,22 @@ fn bench_timestamps(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&timestamps)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&timestamps)).unwrap());
     });
 
     let compressed = codec.compress_i64(&timestamps).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\nTimestamps (1M points):");
     println!("  Original size: {} MB", (size * 8) / 1_000_000);
     println!("  Compressed size: {} KB", compressed.len() / 1000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -135,23 +132,22 @@ fn bench_sparse_data(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&data)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&data)).unwrap());
     });
 
     let compressed = codec.compress_i64(&data).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\nSparse data (100K points, 95% zeros):");
     println!("  Original size: {} KB", (size * 8) / 1000);
     println!("  Compressed size: {} KB", compressed.len() / 1000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -177,23 +173,22 @@ fn bench_database_ids(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&ids)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&ids)).unwrap());
     });
 
     let compressed = codec.compress_i64(&ids).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\nDatabase IDs (100K IDs with gaps):");
     println!("  Original size: {} KB", (size * 8) / 1000);
     println!("  Compressed size: {} KB", compressed.len() / 1000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -222,20 +217,22 @@ fn bench_regime_indicators(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 3 * 8) as u64)); // 3 indicators
 
     group.bench_function("compress_trend", |b| {
-        b.iter(|| {
-            codec.compress_f64(black_box(&trend_scores), None).unwrap()
-        });
+        b.iter(|| codec.compress_f64(black_box(&trend_scores), None).unwrap());
     });
 
     group.bench_function("compress_volatility", |b| {
         b.iter(|| {
-            codec.compress_f64(black_box(&volatility_scores), None).unwrap()
+            codec
+                .compress_f64(black_box(&volatility_scores), None)
+                .unwrap()
         });
     });
 
     group.bench_function("compress_momentum", |b| {
         b.iter(|| {
-            codec.compress_f64(black_box(&momentum_scores), None).unwrap()
+            codec
+                .compress_f64(black_box(&momentum_scores), None)
+                .unwrap()
         });
     });
 
@@ -244,12 +241,16 @@ fn bench_regime_indicators(c: &mut Criterion) {
     let momentum_compressed = codec.compress_f64(&momentum_scores, None).unwrap();
 
     let total_original = size * 3 * 8;
-    let total_compressed = trend_compressed.len() + volatility_compressed.len() + momentum_compressed.len();
+    let total_compressed =
+        trend_compressed.len() + volatility_compressed.len() + momentum_compressed.len();
 
     println!("\nRegime indicators (10K candles, 3 indicators):");
     println!("  Original size: {} KB", total_original / 1000);
     println!("  Compressed size: {} KB", total_compressed / 1000);
-    println!("  Compression ratio: {:.2}x", total_original as f64 / total_compressed as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        total_original as f64 / total_compressed as f64
+    );
 
     group.finish();
 }
@@ -260,33 +261,35 @@ fn bench_multi_timeframe(c: &mut Criterion) {
 
     // Simulate different timeframes for the same indicator
     let sizes = vec![
-        ("1h", 8760),   // 1 year of hourly data
-        ("4h", 2190),   // 1 year of 4h data
-        ("12h", 730),   // 1 year of 12h data
-        ("1d", 365),    // 1 year of daily data
+        ("1h", 8760), // 1 year of hourly data
+        ("4h", 2190), // 1 year of 4h data
+        ("12h", 730), // 1 year of 12h data
+        ("1d", 365),  // 1 year of daily data
     ];
 
     let mut group = c.benchmark_group("realistic_multi_timeframe");
 
     for (timeframe, size) in sizes {
-        let data: Vec<f64> = (0..size).map(|i| {
-            let t = i as f64;
-            (t / 100.0).sin() * 0.5 + (t / 20.0).cos() * 0.3
-        }).collect();
+        let data: Vec<f64> = (0..size)
+            .map(|i| {
+                let t = i as f64;
+                (t / 100.0).sin() * 0.5 + (t / 20.0).cos() * 0.3
+            })
+            .collect();
 
         group.throughput(Throughput::Bytes((size * 8) as u64));
         group.bench_with_input(BenchmarkId::new("compress", timeframe), &data, |b, data| {
-            b.iter(|| {
-                codec.compress_f64(black_box(data), None).unwrap()
-            });
+            b.iter(|| codec.compress_f64(black_box(data), None).unwrap());
         });
 
         let compressed = codec.compress_f64(&data, None).unwrap();
         println!("\n{} timeframe ({} points):", timeframe, size);
-        println!("  Original: {} KB, Compressed: {} KB, Ratio: {:.2}x",
-                 (size * 8) / 1000,
-                 compressed.len() / 1000,
-                 (size * 8) as f64 / compressed.len() as f64);
+        println!(
+            "  Original: {} KB, Compressed: {} KB, Ratio: {:.2}x",
+            (size * 8) / 1000,
+            compressed.len() / 1000,
+            (size * 8) as f64 / compressed.len() as f64
+        );
     }
 
     group.finish();
@@ -318,23 +321,22 @@ fn bench_log_data(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&log_levels)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&log_levels)).unwrap());
     });
 
     let compressed = codec.compress_i64(&log_levels).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\nLog levels (100K entries):");
     println!("  Original size: {} KB", (size * 8) / 1000);
     println!("  Compressed size: {} KB", compressed.len() / 1000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }
@@ -361,23 +363,22 @@ fn bench_network_metrics(c: &mut Criterion) {
     group.throughput(Throughput::Bytes((size * 8) as u64));
 
     group.bench_function("compress", |b| {
-        b.iter(|| {
-            codec.compress_i64(black_box(&bytes_transferred)).unwrap()
-        });
+        b.iter(|| codec.compress_i64(black_box(&bytes_transferred)).unwrap());
     });
 
     let compressed = codec.compress_i64(&bytes_transferred).unwrap();
 
     group.bench_function("decompress", |b| {
-        b.iter(|| {
-            codec.decompress_i64(black_box(&compressed)).unwrap()
-        });
+        b.iter(|| codec.decompress_i64(black_box(&compressed)).unwrap());
     });
 
     println!("\nNetwork metrics (100K measurements):");
     println!("  Original size: {} KB", (size * 8) / 1000);
     println!("  Compressed size: {} KB", compressed.len() / 1000);
-    println!("  Compression ratio: {:.2}x", (size * 8) as f64 / compressed.len() as f64);
+    println!(
+        "  Compression ratio: {:.2}x",
+        (size * 8) as f64 / compressed.len() as f64
+    );
 
     group.finish();
 }

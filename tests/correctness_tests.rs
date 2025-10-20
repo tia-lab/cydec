@@ -12,8 +12,14 @@ fn test_i64_determinism() -> Result<()> {
     let compressed2 = codec.compress_i64(&data)?;
     let compressed3 = codec.compress_i64(&data)?;
 
-    assert_eq!(compressed1, compressed2, "Compression should be deterministic");
-    assert_eq!(compressed2, compressed3, "Compression should be deterministic");
+    assert_eq!(
+        compressed1, compressed2,
+        "Compression should be deterministic"
+    );
+    assert_eq!(
+        compressed2, compressed3,
+        "Compression should be deterministic"
+    );
     Ok(())
 }
 
@@ -26,8 +32,14 @@ fn test_f64_determinism() -> Result<()> {
     let compressed2 = codec.compress_f64(&data, None)?;
     let compressed3 = codec.compress_f64(&data, None)?;
 
-    assert_eq!(compressed1, compressed2, "Compression should be deterministic");
-    assert_eq!(compressed2, compressed3, "Compression should be deterministic");
+    assert_eq!(
+        compressed1, compressed2,
+        "Compression should be deterministic"
+    );
+    assert_eq!(
+        compressed2, compressed3,
+        "Compression should be deterministic"
+    );
     Ok(())
 }
 
@@ -51,26 +63,25 @@ fn test_i64_data_integrity_extremes() -> Result<()> {
     let compressed = codec.compress_i64(&data)?;
     let decompressed = codec.decompress_i64(&compressed)?;
 
-    assert_eq!(data, decompressed, "Extreme values must be preserved exactly");
+    assert_eq!(
+        data, decompressed,
+        "Extreme values must be preserved exactly"
+    );
     Ok(())
 }
 
 #[test]
 fn test_u64_data_integrity_extremes() -> Result<()> {
     let codec = IntegerCodec::default();
-    let data = vec![
-        0,
-        1,
-        1000000,
-        u64::MAX / 2,
-        u64::MAX - 1,
-        u64::MAX,
-    ];
+    let data = vec![0, 1, 1000000, u64::MAX / 2, u64::MAX - 1, u64::MAX];
 
     let compressed = codec.compress_u64(&data)?;
     let decompressed = codec.decompress_u64(&compressed)?;
 
-    assert_eq!(data, decompressed, "Extreme values must be preserved exactly");
+    assert_eq!(
+        data, decompressed,
+        "Extreme values must be preserved exactly"
+    );
     Ok(())
 }
 
@@ -231,7 +242,11 @@ fn test_f64_known_output_format() -> Result<()> {
 
     // Verify scale factor field
     let scale = f64::from_le_bytes(compressed[16..24].try_into().unwrap());
-    assert_eq!(scale, FloatingCodec::DEFAULT_F64_SCALE, "Scale should be default");
+    assert_eq!(
+        scale,
+        FloatingCodec::DEFAULT_F64_SCALE,
+        "Scale should be default"
+    );
 
     Ok(())
 }
@@ -244,11 +259,11 @@ fn test_zigzag_encoding_coverage() -> Result<()> {
 
     // Test various patterns that stress zigzag encoding
     let test_cases = vec![
-        vec![0, 1, -1, 2, -2, 3, -3],                    // Alternating signs
-        vec![-10, -9, -8, -7, -6],                       // Negative sequence
-        vec![10, 9, 8, 7, 6],                            // Descending
-        vec![-100, 0, 100, -100, 0, 100],                // Oscillating
-        vec![i64::MIN, 0, i64::MAX],                     // Extreme jumps
+        vec![0, 1, -1, 2, -2, 3, -3],     // Alternating signs
+        vec![-10, -9, -8, -7, -6],        // Negative sequence
+        vec![10, 9, 8, 7, 6],             // Descending
+        vec![-100, 0, 100, -100, 0, 100], // Oscillating
+        vec![i64::MIN, 0, i64::MAX],      // Extreme jumps
     ];
 
     for data in test_cases {
@@ -407,20 +422,15 @@ fn test_i64_large_deltas() -> Result<()> {
     let codec = IntegerCodec::default();
 
     // Create data with very large deltas
-    let data = vec![
-        0,
-        i64::MAX / 2,
-        i64::MIN / 2,
-        0,
-        i64::MAX,
-        i64::MIN,
-        0,
-    ];
+    let data = vec![0, i64::MAX / 2, i64::MIN / 2, 0, i64::MAX, i64::MIN, 0];
 
     let compressed = codec.compress_i64(&data)?;
     let decompressed = codec.decompress_i64(&compressed)?;
 
-    assert_eq!(data, decompressed, "Large deltas should be handled correctly");
+    assert_eq!(
+        data, decompressed,
+        "Large deltas should be handled correctly"
+    );
 
     Ok(())
 }
