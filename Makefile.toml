@@ -8,7 +8,7 @@ description = "Complete PR workflow: create PR, wait for merge confirmation, the
 script_runner = "@shell"
 script = '''
 echo 'Creating release PR...'
-TOKEN=$(gh auth token)
+TOKEN=$(cat ~/.config/gh/hosts.yml | grep oauth_token | awk '{print $2}')
 release-plz release-pr --git-token "$TOKEN"
 echo 'Release PR created! Please review and merge it on GitHub.'
 echo 'After merging, run: cargo make r-release'
@@ -23,6 +23,6 @@ script = '''
 git add .
 git commit -m 'chore: release'
 git push
-TOKEN=$(gh auth token)
+TOKEN=$(cat ~/.config/gh/hosts.yml | grep oauth_token | awk '{print $2}')
 release-plz release --git-token "$TOKEN"
 '''
