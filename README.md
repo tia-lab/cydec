@@ -99,12 +99,43 @@ The compressed format includes a small header (15-23 bytes) containing:
 - Original array length
 - Scale factor (for floating-point types)
 
-## Performance notes
+## Performance benchmarks
 
-- Compression speed: ~500-1000 MB/s on modern hardware
-- Decompression speed: ~1000-2000 MB/s
-- Memory usage: Approximately 2x the input size during compression
-- Best compression ratios on sorted or time-series data
+Benchmarked on the following hardware:
+
+- CPU: Intel Xeon W-2295 @ 3.00GHz (18 cores / 36 threads)
+- RAM: 503 GB
+- OS: Linux 5.15.0-156-generic
+
+### Throughput
+
+| Data Type | Compression | Decompression |
+| --------- | ----------- | ------------- |
+| i64       | 1.33 GiB/s  | 880 MiB/s     |
+| u64       | 1.42 GiB/s  | 850 MiB/s     |
+| i32       | 829 MiB/s   | 396 MiB/s     |
+| u32       | 942 MiB/s   | 396 MiB/s     |
+| f64       | 571 MiB/s   | 334 MiB/s     |
+
+### Compression ratios by data pattern
+
+| Data Pattern        | Elements | Ratio |
+| ------------------- | -------- | ----- |
+| Sequential i64      | 1M       | 2023x |
+| Sequential i64      | 100K     | 1882x |
+| Sequential i64      | 10K      | 1111x |
+| Sequential i64      | 1K       | 222x  |
+| Stock prices (real) | 100K     | 1.6x  |
+| Sensor readings     | 1M       | 2.0x  |
+| Timestamps          | 1M       | 1015x |
+| Database IDs (gaps) | 100K     | 1878x |
+| Sparse (95% zeros)  | 100K     | 1000x |
+
+### Latency (measured)
+
+- 10K elements: 52 μs compress, 87 μs decompress
+- 100K elements: 540 μs compress, 870 μs decompress
+- 1M elements: 5.8 ms compress, 8.6 ms decompress
 
 The library prioritizes speed over maximum compression. If you need better compression ratios and can accept slower speeds, consider using zstd or similar algorithms.
 
